@@ -1,6 +1,5 @@
 package com.csye6225.spring2019.courseservice.Resources;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -23,14 +22,6 @@ public class ProfessorResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Professor> getProfessors() {
-		System.out.println("get all professors");
-		return profService.getAllProfessors();
-	}	
-	
-	@GET
-	@Path("/getProfessorByDepartment")
-	@Produces(MediaType.APPLICATION_JSON)
 	public List<Professor> getProfessorsByDeparment(@QueryParam("department") String department) {
 		if (department == null) {
 			return profService.getAllProfessors();
@@ -38,7 +29,7 @@ public class ProfessorResource {
 		return profService.getProfessorsByDepartment(department);
 	}
 	 
-	// ... webapi/professor/1 
+	// ... webapi/professors/1
 	@GET
 	@Path("/{professorId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -58,9 +49,7 @@ public class ProfessorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Professor addProfessor(Professor prof) {
-			prof.setProfessorId(prof.getFirstName() + prof.getLastName());
-			prof.setJoiningDate(new Date().toString());
-			return profService.addProfessor(prof);
+		return profService.addProfessor(prof);
 	}
 	
 	@PUT
@@ -70,9 +59,5 @@ public class ProfessorResource {
 	public Professor updateProfessor(@PathParam("professorId") long profId, 
 			Professor prof) {
 		return profService.updateProfessorInformation(profId, prof);
-	}
-	
-	public void addProfessor(String firstName, String lastName, String department, Date joiningDate) {
-		profService.addProfessor(firstName, lastName, department, joiningDate);
 	}
 }

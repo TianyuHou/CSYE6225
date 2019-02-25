@@ -46,19 +46,23 @@ public class ProfessorService {
 	
 	public Professor addProfessor(Professor prof) {
 		long nextAvailableId = db.size() + 1;
+		prof.setProfessorId(String.valueOf(nextAvailableId));
+		prof.setJoiningDate(new Date().toString());
 		db.put(nextAvailableId, prof);
 		return prof;
 	}
 
-	public void addProfessor(String firstName, String lastName, String department, Date joiningDate) {
-		long nextAvailableId = db.size() + 1;
-		Professor prof = new Professor(firstName , lastName, 
-				department, firstName + lastName, joiningDate.toString());
-		db.put(nextAvailableId, prof);
-	}
-
 	public Professor updateProfessorInformation(long profId, Professor prof) {
 		if(db.containsKey(profId)) {
+			Professor oldProfessor = db.get(profId);
+			if(prof.getJoiningDate() == null || prof.getJoiningDate().equals("")) {
+				prof.setJoiningDate(oldProfessor.getJoiningDate());
+			}
+			
+			if(prof.getProfessorId() == null || prof.getProfessorId().equals("")) {
+				prof.setProfessorId(oldProfessor.getProfessorId());
+			}
+			
 			db.put(profId, prof);
 			return prof;
 		}
