@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.List;
 
 public class Student {
-	private String name;
+	private String firstName;
+	private String lastName;
 	private String studentId;
 	private File image;
 	private List<Course> courses;
@@ -14,21 +15,31 @@ public class Student {
 		
 	}
 
-	public Student(String name, String studentId, File image, List<Course> courses, Program program) {
+	public Student(String firstName, String lastName, String studentId, File image, List<Course> courses,
+			Program program) {
 		super();
-		this.name = name;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.studentId = studentId;
 		this.image = image;
 		this.courses = courses;
 		this.program = program;
 	}
 
-	public String getName() {
-		return name;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getStudentId() {
@@ -62,6 +73,10 @@ public class Student {
 	public void setProgram(Program program) {
 		this.program = program;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Student [firstName=" + firstName + ", lastName=" + lastName + ", studentId=" + studentId + ", image="
+				+ image + ", courses=" + courses + ", program=" + program + "]";
+	}
 }
