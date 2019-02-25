@@ -5,23 +5,23 @@ import java.util.Map;
 
 public class InMemoryDB {
 	private static Map<Long, Professor> professorDB = new HashMap<> ();
-	private static Map<String, Student> studentDB = new HashMap<> ();
-	private static Map<String, Course> courseDB = new HashMap<> ();
-	private static Map<String, Program> programDB = new HashMap<> ();
+	private static Map<Long, Student> studentDB = new HashMap<> ();
+	private static Map<Long, Course> courseDB = new HashMap<> ();
+	private static Map<Long, Program> programDB = new HashMap<> ();
 	
 	public static Map<Long, Professor> getProfessorDB() {
 		return professorDB;
 	}
 	
-	public static Map<String, Student> getStudentDB() {
+	public static Map<Long, Student> getStudentDB() {
 		return studentDB;
 	}
 	
-	public static Map<String, Course> getCourseDB() {
+	public static Map<Long, Course> getCourseDB() {
 		return courseDB;
 	}
 	
-	public static Map<String, Program> getProgramDB() {
+	public static Map<Long, Program> getProgramDB() {
 		return programDB;
 	}
 }

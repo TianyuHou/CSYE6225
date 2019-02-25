@@ -59,11 +59,9 @@ public class ProfessorService {
 				prof.setJoiningDate(oldProfessor.getJoiningDate());
 			}
 			
-			if(prof.getProfessorId() == null || prof.getProfessorId().equals("")) {
-				prof.setProfessorId(oldProfessor.getProfessorId());
-			}
-			
+			prof.setProfessorId(String.valueOf(profId));
 			db.put(profId, prof);
+			
 			return prof;
 		}
 		return null;
