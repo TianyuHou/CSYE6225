@@ -6,40 +6,16 @@ import java.util.List;
 public class Program {
 	private String programId;
 	private String programName;
-	private List<Course> courseList;
+	private List<String> courseList;
 	
 	public Program() {
 	}
 	
-	public Program(String programId, String programName, List<Course> courseList) {
+	public Program(String programId, String programName, List<String> courseList) {
 		super();
 		this.programId = programId;
 		this.programName = programName;
 		this.courseList = courseList;
-	}
-	
-	public void addCourse(Course course) {
-		if(courseList == null) {
-			courseList = new ArrayList<Course>();
-		}
-		courseList.add(course);
-	}
-	
-	public void removeCourse(String courseId) {
-		if(courseList == null || courseList.size() == 0) {
-			return;
-		}
-		int idx = -1;
-		for(int i = 0; i<courseList.size(); i++) {
-			if(courseList.get(i).getCourseId().equals(courseId)) {
-				idx = i;
-				break;
-			}
-		}
-		
-		if(idx != -1) {
-			courseList.remove(idx);
-		}
 	}
 
 	public String getProgramId() {
@@ -58,12 +34,35 @@ public class Program {
 		this.programName = programName;
 	}
 
-	public List<Course> getCourseList() {
+	public List<String> getCourseList() {
 		return courseList;
 	}
 
-	public void setCourseList(List<Course> courseList) {
+	public void setCourseList(List<String> courseList) {
 		this.courseList = courseList;
+	}
+
+	public void registerCourse(Course course) {
+		if(courseList == null || courseList.size() == 0) {
+			courseList = new ArrayList<String>();
+		}
+		courseList.add(course.getCourseId());
+	}
+	
+	public void removeCourse(Course course) {
+		if(courseList != null && courseList.size() != 0) {
+			int idx = -1;
+			for(int i = 0; i<courseList.size(); i++) {
+				if(courseList.get(i).equalsIgnoreCase(course.getCourseId())) {
+					idx = i;
+					break;
+				}
+			}
+			
+			if(idx != -1) {
+				courseList.remove(idx);
+			}
+		}
 	}
 
 	@Override

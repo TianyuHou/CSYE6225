@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.csye6225.spring2019.courseservice.Services.ProfessorService;
 import com.csye6225.spring2019.courseservice.datamodel.Professor;
+import com.csye6225.spring2019.courseservice.datamodel.RequestRelationId;
 
 @Path("professors")
 public class ProfessorResource {
@@ -34,7 +35,6 @@ public class ProfessorResource {
 	@Path("/{professorId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Professor getProfessor(@PathParam("professorId") String profId) {
-		System.out.println("Professor Resource: Looking for: " + profId);
 		return profService.getProfessor(profId);
 	}
 	
@@ -50,6 +50,22 @@ public class ProfessorResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Professor addProfessor(Professor prof) {
 		return profService.addProfessor(prof);
+	}
+	
+	@POST
+	@Path("/registerProfessor")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Professor registerProfessor(RequestRelationId requestRelationId) {
+		return profService.registerProfessor(requestRelationId);
+	}
+	
+	@POST
+	@Path("/removeProfessor")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Professor removeProfessor(RequestRelationId requestRelationId) {
+		return profService.removeProfessor(requestRelationId);
 	}
 	
 	@PUT

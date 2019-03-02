@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.csye6225.spring2019.courseservice.Services.ProgramService;
 import com.csye6225.spring2019.courseservice.datamodel.Program;
+import com.csye6225.spring2019.courseservice.datamodel.RequestRelationId;
 
 @Path("programs")
 public class ProgramResource {
@@ -29,7 +30,6 @@ public class ProgramResource {
 	@Path("/{programId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Program getProgram(@PathParam("programId") String programId) {
-		System.out.println("Program Resource: Looking for: " + programId);
 		return programService.getProgram(programId);
 	}
 	
@@ -38,6 +38,22 @@ public class ProgramResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Program deleteProgram(@PathParam("programId") long programId) {
 		return programService.deleteProgram(programId);
+	}
+	
+	@POST
+	@Path("/registerCourse")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Program registerCourse(RequestRelationId requestRelationId) {
+		return programService.registerCourse(requestRelationId);
+	}
+	
+	@POST
+	@Path("/removeCourse")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Program removeCourse(RequestRelationId requestRelationId) {
+		return programService.removeCourse(requestRelationId);
 	}
 	
 	@POST

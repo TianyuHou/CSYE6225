@@ -7,6 +7,7 @@ public class InMemoryDB {
 	private static Map<Long, Professor> professorDB = new HashMap<> ();
 	private static Map<Long, Student> studentDB = new HashMap<> ();
 	private static Map<Long, Course> courseDB = new HashMap<> ();
+	private static Map<Long, Lecture> lectureDB = new HashMap<> ();
 	private static Map<Long, Program> programDB = new HashMap<> ();
 	
 	public static Map<Long, Professor> getProfessorDB() {
@@ -19,6 +20,10 @@ public class InMemoryDB {
 	
 	public static Map<Long, Course> getCourseDB() {
 		return courseDB;
+	}
+	
+	public static Map<Long, Lecture> getLectureDB() {
+		return lectureDB;
 	}
 	
 	public static Map<Long, Program> getProgramDB() {

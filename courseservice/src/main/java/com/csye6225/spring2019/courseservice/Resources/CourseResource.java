@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.csye6225.spring2019.courseservice.Services.CourseService;
 import com.csye6225.spring2019.courseservice.datamodel.Course;
+import com.csye6225.spring2019.courseservice.datamodel.RequestRelationId;
 
 @Path("courses")
 public class CourseResource {
@@ -29,7 +30,6 @@ public class CourseResource {
 	@Path("/{courseId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Course getCourse(@PathParam("courseId") String courseId) {
-		System.out.println("Course Resource: Looking for: " + courseId);
 		return courseService.getCourse(courseId);
 	}
 	
@@ -45,6 +45,14 @@ public class CourseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Course addCourse(Course course) {
 		return courseService.addCourse(course);
+	}
+	
+	@POST
+	@Path("/registerTA")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Course registerTA(RequestRelationId requestRelationId) {
+		return courseService.registerTA(requestRelationId);
 	}
 	
 	@PUT
