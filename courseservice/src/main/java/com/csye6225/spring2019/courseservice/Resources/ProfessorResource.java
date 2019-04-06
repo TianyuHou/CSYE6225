@@ -15,12 +15,12 @@ import javax.ws.rs.core.MediaType;
 
 import com.csye6225.spring2019.courseservice.Services.ProfessorService;
 import com.csye6225.spring2019.courseservice.datamodel.Professor;
-import com.csye6225.spring2019.courseservice.datamodel.RequestRelationId;
+import com.csye6225.spring2019.courseservice.datamodel.RequestTimeModel;
 
 @Path("professors")
 public class ProfessorResource {
 	ProfessorService profService = new ProfessorService();
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Professor> getProfessorsByDeparment(@QueryParam("department") String department) {
@@ -29,7 +29,7 @@ public class ProfessorResource {
 		}
 		return profService.getProfessorsByDepartment(department);
 	}
-	 
+
 	// ... webapi/professors/1
 	@GET
 	@Path("/{professorId}")
@@ -38,42 +38,33 @@ public class ProfessorResource {
 		return profService.getProfessor(profId);
 	}
 	
+	@POST
+	@Path("/getProfessorByTime")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public List<Professor> getProfessorWithinTimePeriod(RequestTimeModel requestTimeModel) {
+		return profService.getProfessorWithinTimePeriod(requestTimeModel);
+	}
+	
 	@DELETE
 	@Path("/{professorId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Professor deleteProfessor(@PathParam("professorId") long profId) {
+	public Professor deleteProfessor(@PathParam("professorId") String profId) {
 		return profService.deleteProfessor(profId);
 	}
-	
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Professor addProfessor(Professor prof) {
 		return profService.addProfessor(prof);
 	}
-	
-	@POST
-	@Path("/registerProfessor")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Professor registerProfessor(RequestRelationId requestRelationId) {
-		return profService.registerProfessor(requestRelationId);
-	}
-	
-	@POST
-	@Path("/removeProfessor")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Professor removeProfessor(RequestRelationId requestRelationId) {
-		return profService.removeProfessor(requestRelationId);
-	}
-	
+
 	@PUT
 	@Path("/{professorId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Professor updateProfessor(@PathParam("professorId") long profId, 
-			Professor prof) {
+	public Professor updateProfessor(@PathParam("professorId") String profId, Professor prof) {
 		return profService.updateProfessorInformation(profId, prof);
 	}
 }

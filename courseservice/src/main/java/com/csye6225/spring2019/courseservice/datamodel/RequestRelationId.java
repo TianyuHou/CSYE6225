@@ -1,68 +1,68 @@
 package com.csye6225.spring2019.courseservice.datamodel;
 
 public class RequestRelationId {
-	private long lectureId;
-	private long courseId;
-	private long professorId;
-	private long studentId;
-	private long programId;
+	private String boardId;
+	private String courseId;
+	private String professorId;
+	private String studentId;
+	private String announcementId;
 	
 	public RequestRelationId() {
 		
 	}
 	
-	public RequestRelationId(long lectureId, long courseId, long professorId, long studentId, long programId) {
+	public RequestRelationId(String boardId, String courseId, String professorId, String studentId, String announcementId) {
 		super();
-		this.lectureId = lectureId;
+		this.boardId = boardId;
 		this.courseId = courseId;
 		this.professorId = professorId;
 		this.studentId = studentId;
-		this.programId = programId;
+		this.announcementId = announcementId;
 	}
 
-	public long getLectureId() {
-		return lectureId;
+	public String getBoardId() {
+		return boardId;
 	}
 
-	public void setLectureId(long lectureId) {
-		this.lectureId = lectureId;
+	public void setBoardId(String boardId) {
+		this.boardId = boardId;
 	}
 
-	public long getCourseId() {
+	public String getCourseId() {
 		return courseId;
 	}
 
-	public void setCourseId(long courseId) {
+	public void setCourseId(String courseId) {
 		this.courseId = courseId;
 	}
 
-	public long getProfessorId() {
+	public String getProfessorId() {
 		return professorId;
 	}
 
-	public void setProfessorId(long professorId) {
+	public void setProfessorId(String professorId) {
 		this.professorId = professorId;
 	}
 
-	public long getStudentId() {
+	public String getStudentId() {
 		return studentId;
 	}
 
-	public void setStudentId(long studentId) {
+	public void setStudentId(String studentId) {
 		this.studentId = studentId;
 	}
 
-	public long getProgramId() {
-		return programId;
+	public String getAnnouncementId() {
+		return announcementId;
 	}
 
-	public void setProgramId(long programId) {
-		this.programId = programId;
+	public void setAnnouncementId(String announcementId) {
+		this.announcementId = announcementId;
 	}
 
 	@Override
 	public String toString() {
-		return "RequestRelationId [lectureId=" + lectureId + ", courseId=" + courseId + ", professorId=" + professorId
-				+ ", studentId=" + studentId + ", programId=" + programId + "]";
+		return "RequestRelationId [boardId=" + boardId + ", courseId=" + courseId + ", professorId=" + professorId
+				+ ", studentId=" + studentId + ", announcementId=" + announcementId + "]";
 	}
 }

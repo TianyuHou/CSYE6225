@@ -4,29 +4,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryDB {
-	private static Map<Long, Professor> professorDB = new HashMap<> ();
-	private static Map<Long, Student> studentDB = new HashMap<> ();
-	private static Map<Long, Course> courseDB = new HashMap<> ();
-	private static Map<Long, Lecture> lectureDB = new HashMap<> ();
-	private static Map<Long, Program> programDB = new HashMap<> ();
-	
-	public static Map<Long, Professor> getProfessorDB() {
+	private static Map<String, Professor> professorDB = new HashMap<>();
+	private static Map<String, Student> studentDB = new HashMap<>();
+	private static Map<String, Course> courseDB = new HashMap<>();
+	private static Map<String, Board> boardDB = new HashMap<>();
+	private static Map<String, Announcement> announcementDB = new HashMap<>();
+
+	public static Map<String, Professor> getProfessorDB() {
 		return professorDB;
 	}
-	
-	public static Map<Long, Student> getStudentDB() {
+
+	public static Map<String, Student> getStudentDB() {
 		return studentDB;
 	}
-	
-	public static Map<Long, Course> getCourseDB() {
+
+	public static Map<String, Course> getCourseDB() {
 		return courseDB;
 	}
-	
-	public static Map<Long, Lecture> getLectureDB() {
-		return lectureDB;
+
+	public static Map<String, Board> getBoardDB() {
+		return boardDB;
 	}
-	
-	public static Map<Long, Program> getProgramDB() {
-		return programDB;
+
+	public static Map<String, Announcement> getAnnouncementDB() {
+		return announcementDB;
 	}
 }

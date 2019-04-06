@@ -15,21 +15,22 @@ import javax.ws.rs.core.MediaType;
 
 import com.csye6225.spring2019.courseservice.Services.StudentService;
 import com.csye6225.spring2019.courseservice.datamodel.RequestRelationId;
+import com.csye6225.spring2019.courseservice.datamodel.RequestTimeModel;
 import com.csye6225.spring2019.courseservice.datamodel.Student;
 
 @Path("students")
 public class StudentResource {
 	StudentService studentService = new StudentService();
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Student> getStudentsByDeparment(@QueryParam("program") String program) {
-		if (program == null) {
+	public List<Student> getStudentsByDeparment(@QueryParam("department") String department) {
+		if (department == null) {
 			return studentService.getAllStudents();
 		}
-		return studentService.getStudentsByProgram(program);
+		return studentService.getStudentsByDepartment(department);
 	}
-	 
+
 	// ... webapi/students/1
 	@GET
 	@Path("/{studentId}")
@@ -37,14 +38,14 @@ public class StudentResource {
 	public Student getStudent(@PathParam("studentId") String stuId) {
 		return studentService.getStudent(stuId);
 	}
-	
+
 	@DELETE
 	@Path("/{studentId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Student deleteStudent(@PathParam("studentId") long stuId) {
+	public Student deleteStudent(@PathParam("studentId") String stuId) {
 		return studentService.deleteStudent(stuId);
 	}
-	
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -53,13 +54,21 @@ public class StudentResource {
 	}
 	
 	@POST
+	@Path("/getStudentByTimePeriod")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public List<Student> getStudentWithinTimePeriod(RequestTimeModel requestTimeModel) {
+		return studentService.getStudentWithinTimePeriod(requestTimeModel);
+	}
+
+	@POST
 	@Path("/registerStudentToCourse")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Student registerStudentToCourse(RequestRelationId requestRelationId) {
 		return studentService.registerStudentToCourse(requestRelationId);
 	}
-	
+
 	@POST
 	@Path("/removeStudentToCourse")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -67,29 +76,12 @@ public class StudentResource {
 	public Student removeStudentToCourse(RequestRelationId requestRelationId) {
 		return studentService.removeStudentToCourse(requestRelationId);
 	}
-	
-	@POST
-	@Path("/registerStudentToProgram")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Student registerStudentToProgram(RequestRelationId requestRelationId) {
-		return studentService.registerStudentToProgram(requestRelationId);
-	}
-	
-	@POST
-	@Path("/removeStudentToProgram")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Student removeStudentToProgram(RequestRelationId requestRelationId) {
-		return studentService.removeStudentToProgram(requestRelationId);
-	}
-	
+
 	@PUT
 	@Path("/{studentId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Student updateStudent(@PathParam("studentId") long stuId, 
-			Student student) {
-		return studentService.updateStudentInformation(stuId, student);
+	public Student updateStudent(@PathParam("studentId") String stuId, Student student) {
+		return studentService.updateStudent(stuId, student);
 	}
 }

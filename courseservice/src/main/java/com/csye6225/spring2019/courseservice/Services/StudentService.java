@@ -1,136 +1,129 @@
 package com.csye6225.spring2019.courseservice.Services;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.csye6225.spring2019.courseservice.datamodel.Course;
-import com.csye6225.spring2019.courseservice.datamodel.InMemoryDB;
-import com.csye6225.spring2019.courseservice.datamodel.Program;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.csye6225.spring2019.courseservice.datamodel.DynamoDB;
 import com.csye6225.spring2019.courseservice.datamodel.RequestRelationId;
+import com.csye6225.spring2019.courseservice.datamodel.RequestTimeModel;
 import com.csye6225.spring2019.courseservice.datamodel.Student;
 
 public class StudentService {
-	static Map<Long, Student> studentDb = InMemoryDB.getStudentDB();
-	static Map<Long, Course> courseDb = InMemoryDB.getCourseDB();
-	static Map<Long, Program> programDb = InMemoryDB.getProgramDB();
-	
+	private static DynamoDB dynamoDb;
+	private static DynamoDBMapper mapper;
+	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
 	public StudentService() {
-	}
+		dynamoDb = new DynamoDB();
+		dynamoDb.init();
 	
+		mapper = new DynamoDBMapper(dynamoDb.getClient());
+	}
+
 	public List<Student> getAllStudents() {
-		List<Student> list = new ArrayList<>();
-		studentDb.values().stream().forEach(e -> list.add(e));
+		List<Student> list = mapper.scan(Student.class, new DynamoDBScanExpression());
 		return list;
 	}
 
-	public List<Student> getStudentsByProgram(String program) {
-		List<Student> list = new ArrayList<>();
-		studentDb.values().stream()
-			.filter(e -> e.getProgramName().equalsIgnoreCase(program))
-			.forEach(e -> list.add(e));
+	public List<Student> getStudentsByDepartment(String department) {
+		HashMap<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+		eav.put(":v1", new AttributeValue().withS(department));
+		DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withFilterExpression("department = :v1")
+				.withExpressionAttributeValues(eav);
+
+		List<Student> list = mapper.scan(Student.class, scanExpression);
 		return list;
+	}
+	
+	public List<Student> getStudentWithinTimePeriod(RequestTimeModel requestTimeModel) {
+		String startDate = dateFormatter.format(requestTimeModel.getStartDate());
+        String endDate = dateFormatter.format(requestTimeModel.getEndDate());
+        
+        Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+        eav.put(":val1", new AttributeValue().withS(startDate));
+        eav.put(":val2", new AttributeValue().withS(endDate));
+        
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withFilterExpression("joiningDate between :val1 and :val2")
+                .withExpressionAttributeValues(eav);
+        
+        List<Student> students = mapper.scan(Student.class, scanExpression);
+        
+        return students;
 	}
 
 	public Student getStudent(String stuId) {
-		if(studentDb.containsKey(Long.parseLong(stuId))) {
-			return studentDb.get(Long.parseLong(stuId));
-		}
-		return null;
-	}
-
-	public Student deleteStudent(long stuId) {
-		if(studentDb.containsKey(stuId)) {
-			Student student = studentDb.get(stuId);
-			studentDb.remove(stuId);
-			return student;
-		}
-		return null;
-	}
-	
-	public Student addStudent(Student student) {
-		long nextAvailableId = studentDb.size() + 1;
-		student.setStudentId(String.valueOf(nextAvailableId));
-		studentDb.put(nextAvailableId, student);
+		Student student = mapper.load(Student.class, stuId);
 		return student;
 	}
 
-	public Student updateStudentInformation(long stuId, Student student) {
-		if(studentDb.containsKey(stuId)) {
-			student.setStudentId(String.valueOf(stuId));
-			studentDb.put(stuId, student);
-			return student;
-		}
-		return null;
+	public Student deleteStudent(String stuId) {
+		Student student = getStudent(stuId);
+		mapper.delete(student);
+		return student;
 	}
-	
+
+	public Student addStudent(Student student) {
+		student.setJoiningDate(dateFormatter.format(new Date()));
+		mapper.save(student);
+		return student;
+	}
+
+	public Student updateStudent(String stuId, Student student) {
+		Student oldStu = getStudent(stuId);
+		DynamoDBMapperConfig dynamoDBMapperConfig = new DynamoDBMapperConfig.Builder()
+				.withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
+				.withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE).build();
+		
+		if(student.getJoiningDate() == null || student.getJoiningDate().length() == 0) {
+			student.setJoiningDate(oldStu.getJoiningDate());
+		}
+		student.setStudentId(stuId);
+		mapper.save(student, dynamoDBMapperConfig);
+
+		return student;
+	}
+
 	public Student registerStudentToCourse(RequestRelationId requestRelationId) {
-		long courseId = requestRelationId.getCourseId();
-		long stuId = requestRelationId.getStudentId();
-		
-		if(courseDb.containsKey(courseId) && studentDb.containsKey(stuId)) {
-			Course course = courseDb.get(courseId);
-			Student student = studentDb.get(stuId);
-			course.registerStudent(student);
-			student.registerCourse(course);
-			
-			courseDb.put(courseId, course);
-			studentDb.put(stuId, student);
-			
-			return student;
+		String courseId = requestRelationId.getCourseId();
+		String stuId = requestRelationId.getStudentId();
+
+		Student student = mapper.load(Student.class, stuId);
+		List<String> registeredCourse = student.getRegisteredCourses();
+		if (registeredCourse == null) {
+			registeredCourse = new ArrayList<String>();
 		}
-		
-		return null;
+		registeredCourse.add(courseId);
+		return updateStudent(stuId, student);
 	}
-	
+
 	public Student removeStudentToCourse(RequestRelationId requestRelationId) {
-		long courseId = requestRelationId.getCourseId();
-		long stuId = requestRelationId.getStudentId();
-		
-		if(courseDb.containsKey(courseId) && studentDb.containsKey(stuId)) {
-			Course course = courseDb.get(courseId);
-			Student student = studentDb.get(stuId);
-			course.removeStudent(student);
-			student.removeCourse(course);
+		String courseId = requestRelationId.getCourseId();
+		String stuId = requestRelationId.getStudentId();
+
+		Student student = mapper.load(Student.class, stuId);
+		List<String> registeredCourse = student.getRegisteredCourses();
+		if (registeredCourse != null && registeredCourse.size() > 0) {
+			int idx = -1;
+			for(int i = 0; i<registeredCourse.size(); i++) {
+				if(registeredCourse.get(i).equalsIgnoreCase(courseId)) {
+					idx = i;
+					break;
+				}
+			}
 			
-			courseDb.put(courseId, course);
-			studentDb.put(stuId, student);
-			
-			return student;
+			if(idx != -1) {
+				registeredCourse.remove(idx);
+			}
 		}
-		
-		return null;
-	}
-	
-	public Student registerStudentToProgram(RequestRelationId requestRelationId) {
-		long proId = requestRelationId.getProgramId();
-		long stuId = requestRelationId.getStudentId();
-		
-		if(programDb.containsKey(proId) && studentDb.containsKey(stuId)) {
-			Program program = programDb.get(proId);
-			Student student = studentDb.get(stuId);
-			
-			student.setProgramName(program.getProgramId());
-			studentDb.put(stuId, student);
-			programDb.put(proId, program);
-			
-			return student;
-		}
-		
-		return null;
-	}
-	
-	public Student removeStudentToProgram(RequestRelationId requestRelationId) {
-		long stuId = requestRelationId.getStudentId();
-		
-		if(studentDb.containsKey(stuId)) {
-			Student student = studentDb.get(stuId);
-			
-			student.setProgramName("");
-			studentDb.put(stuId, student);
-			return student;
-		}
-		
-		return null;
+		return updateStudent(stuId, student);
 	}
 }
